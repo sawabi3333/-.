@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💜 أذكار الصباح والمساء يا ولاء💜</title>
+<style>
+body{
+    margin:0;
+    font-family: Tahoma;
+    color:white;
+    overflow-x:hidden;
+    background: linear-gradient(to bottom,#330066,#660099);
+    transition: background 1s ease;
+}
+canvas#stars{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:-3;
+}
+canvas#moonCanvas{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:-2;
+}
+.halo{
+    position:fixed;
+    top:20px;
+    left:20px;
+    font-size:70px;
+    opacity:0.2;
+    z-index:-1;
+}
+h1{
+    text-align:center;
+    padding-top:20px;
+}
+.buttons{
+    text-align:center;
+    margin:20px 0;
+}
+button{
+    padding:8px 18px;
+    margin:5px;
+    border:none;
+    border-radius:25px;
+    cursor:pointer;
+    background:linear-gradient(45deg,#b266ff,#8a2be2);
+    color:white;
+    font-weight:bold;
+    transition:0.3s;
+}
+button:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 20px #d9a3ff;
+}
+.zekr{
+    backdrop-filter:blur(10px);
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.2);
+    padding:15px;
+    border-radius:15px;
+    margin:15px auto;
+    width:90%;
+    max-width:800px;
+    box-shadow:0 0 15px rgba(186,85,211,0.3);
+    animation: fadeIn 0.5s ease;
+}
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
+}
+.counter{
+    margin-top:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.count{
+    font-size:18px;
+    font-weight:bold;
+    color:#e0b3ff;
+}
+.done{ color:#ff66cc; }
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<canvas id="moonCanvas"></canvas>
+<div class="halo">🌙</div>
+
+<h1>💜 أذكار الصباح والمساء 💜</h1>
+
+<div class="buttons">
+<button onclick="loadAzkar('morning')">أذكار الصباح</button>
+<button onclick="loadAzkar('evening')">أذكار المساء</button>
+<button onclick="resetAll()">إعادة تعيين</button>
+<button onclick="toggleSound()">🔊 صوت</button>
+</div>
+
+<div id="content"></div>
+
+<script>
+let soundEnabled=true;
+function toggleSound(){ soundEnabled=!soundEnabled; alert(soundEnabled?"الصوت مفعل":"الصوت متوقف"); }
+
+// ==================== بيانات الأذكار ====================
+const azkar = {
+morning: [
+{ text:`أَصبَحْنا على فِطرةِ الإسلامِ، وكَلِمةِ الإخلاصِ، ودِينِ نَبيِّنا محمَّدٍ صلَّى اللهُ عليه وسلَّمَ، ومِلَّةِ أبِينا إبراهيمَ، حَنيفًا مُسلِمًا، وما كان مِنَ المُشرِكينَ.`, count:1 },
+{ text:`رضيتُ باللهِ ربًّا وبالإسلامِ دينًا وبمحمَّدٍ صلَّى اللهُ عليه وسلَّم نبيًّا.`, count:3 },
+{ text:`لا إلهَ إلَّا اللهُ وحدَه لا شريك له له المُلكُ وله الحمدُ وهو على كلِّ شيءٍ قديرٌ.`, count:1 },
+{ text:`اللهمَّ إني أسألُك علمًا نافعًا ورزقًا طيبًا وعملًا متقبلًا.`, count:1 },
+{ text:`بسمِ اللَّهِ الَّذي لا يضرُّ معَ اسمِهِ شيءٌ، في الأرضِ، ولا في السَّماءِ، وَهوَ السَّميعُ العليمُ.`, count:3 },
+{ text:`اللهمَّ بك أصبحنا وبك أمسينا وبك نحيا وبك نموتُ وإليك النُّشورُ.`, count:1 },
+{ text:`اللَّهُمَّ أنتَ ربِّي لا إلَهَ إلَّا أنتَ خلَقتَني وأَنا عبدُكَ وأَنا على عَهْدِكَ ووعدِكَ ما استطَعتُ أعوذُ بِكَ من شرِّ ما صنعتُ أبوءُ لَكَ بنعمتِكَ عليَّ وأبوءُ بذَنبي فاغفِر لي فإنَّهُ لا يغفرُ الذُّنوبَ إلَّا أنتَ.`, count:1 },
+{ text:`أصبَحنا وأصبَح المُلْكُ للهِ والحمدُ للهِ أسأَلُكَ مِن خيرِ هذا اليومِ ومِن خيرِ ما فيه وخيرِ ما بعدَه وأعوذُ بكَ مِن الكسَلِ والهرَمِ وسوءِ العُمُرِ وفتنةِ الدَّجَّالِ وعذابِ القبرِ.`, count:1 },
+{ text:`يا حيُّ يا قيومُ برحمتك أستغيثُ، وأَصلِحْ لي شأني كلَّه، ولا تَكِلْني إلى نفسي طرفَةَ عَينٍ أبدًا.`, count:1 },
+{ text:`اللهمَّ إني أسألُك العفوَ والعافيةَ في الدنيا والآخرةِ، اللهمَّ إني أسألُك العفوَ والعافيةَ في دِيني ودنيايَ وأهلي ومالي، اللهمَّ استُرْ عوراتي وآمِنْ روعاتي واحفظني من بين يدي ومن خلفي وعن يميني وعن شمالي ومن فوقي، وأعوذُ بك أن أُغْتَالَ من تحتي.`, count:1 },
+{ text:`حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ ۖ عَلَيْهِ تَوَكَّلْتُ ۖ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ.`, count:7 },
+{ text:`سُبْحَانَ اللهِ عَدَدَ خَلْقِهِ، سُبْحَانَ اللهِ رِضَا نَفْسِهِ، سُبْحَانَ اللهِ زِنْةَ عَرْشِهِ، سُبْحَانَ اللهِ مِدَادَ كَلِمَاتِهِ.`, count:3 },
+{ text:`اللهمَّ فاطرَ السمواتِ والأرضِ عالمَ الغيبِ والشهادةِ لا إلهَ إلَّا أنتَ ربَّ كلِّ شيءٍ ومَليكَه أعوذُ بك من شرِّ نفسي ومن شرِّ الشيطانِ وشرَكِه وأنْ أقترفَ على نفسي سوءًا أو أجرَّهُ إلى مسلمٍ.`, count:1 },
+{ text:`اللَّهُمَّ إنِّي أصبَحتُ أنِّي أُشهِدُك، وأُشهِدُ حَمَلةَ عَرشِكَ، ومَلائِكَتَك، وجميعَ خَلقِكَ: بأنَّك أنتَ اللهُ لا إلهَ إلَّا أنتَ، وَحْدَك لا شريكَ لكَ، وأنَّ مُحمَّدًا عبدُكَ ورسولُكَ.`, count:4 },
+{ text:`لا إلَه إلَّا اللهُ وحدَه لا شَريكَ له، له المُلكُ وله الحمدُ يُحيِي ويُميتُ وهو على كلِّ شيءٍ قديرٌ.`, count:10 },
+{ text:`سبحان اللهِ والحمدُ للهِ ولا إلهَ إلَّا اللهُ واللهُ أكبرُ ولا حولَ ولا قوَّةَ إلَّا باللهِ العليِّ العظيمِ.`, count:100 },
+{ text:`سُبْحَانَ اللهِ وبِحَمْدِهِ.`, count:100 },
+{ text:`اللهمَّ عافني في بدَني، اللهمَّ عافني في سمعي، اللهمَّ عافني في بصري لا إلهَ إلا أنتَ، اللهمَّ إني أعوذُ بك من الكفرِ والفقرِ وأعوذُ بك من عذابِ القبرِ لا إلهَ إلا أنتَ.`, count:3 }
+]
+evening: [
+{ text:`قراءة آية الكرسي: اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ...`, count:1 },
+{ text:`أمسَيْنا على فِطرةِ الإسلامِ وعلى كَلِمةِ الإخلاصِ وعلى دينِ نبيِّنا محمَّدٍ صلَّى اللهُ عليه وسلَّم وعلى مِلَّةِ أبينا إبراهيمَ حنيفًا مسلمًا وما كان مِنَ المشركينَ.`, count:1 },
+{ text:`رضيتُ باللهِ ربًّا وبالإسلامِ دينًا وبمحمَّدٍ صلَّى اللهُ عليه وسلَّم نبيًّا.`, count:3 },
+{ text:`اللهم بكَ أمْسَينَا، وبكَ أصبحنا، وبكَ نحيا، وبكَ نموتُ، وإليكَ المصيرُ.`, count:1 },
+{ text:`يا حيُّ يا قيومُ برحمتك أستغيثُ، وأَصلِحْ لي شأني كلَّه، ولا تَكِلْني إلى نفسي طرفَةَ عَينٍ أبدًا.`, count:1 },
+{ text:`اللَّهُمَّ أنتَ ربِّي لا إلَهَ إلَّا أنتَ خلَقتَني وأَنا عبدُكَ وأَنا على عَهْدِكَ ووعدِكَ ما استطَعتُ أعوذُ بِكَ من شرِّ ما صنعتُ أبوءُ لَكَ بنعمتِكَ عليَّ وأبوءُ بذَنبي فاغفِر لي فإنَّهُ لا يغفرُ الذُّنوبَ إلَّا أنتَ.`, count:1 },
+{ text:`اللهمَّ فاطرَ السمواتِ والأرضِ عالمَ الغيبِ والشهادةِ لا إلهَ إلَّا أنتَ ربَّ كلِّ شيءٍ ومَليكَه أعوذُ بك من شرِّ نفسي ومن شرِّ الشيطانِ وشرَكِه وأنْ أقترفَ على نفسي سوءًا أو أجرَّهُ إلى مسلمٍ.`, count:1 },
+{ text:`أَمْسَيْنَا وَأَمْسَى المُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ...`, count:1 },
+{ text:`اللهمَّ إني أسألُك العفوَ والعافيةَ في الدنيا والآخرةِ...`, count:1 },
+{ text:`بسمِ اللَّهِ الَّذي لا يضرُّ معَ اسمِهِ شيءٌ ...`, count:3 },
+{ text:`أعوذُ بكلماتِ اللهِ التَّامَّاتِ مِن شرِّ ما خلَق.`, count:3 },
+{ text:`اللَّهُمَّ عافِني في بَدَني، اللَّهُمَّ عافِني في سَمعي، اللَّهُمَّ عافِني في بَصَري، لا إلهَ إلَّا أنتَ...`, count:3 },
+{ text:`قراءة سور: الإخلاص، الفلق، والناس.`, count:3 },
+{ text:`حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ...`, count:7 },
+{ text:`اللَّهُمَّ إنِّي أمسيتُ أُشهِدُك...`, count:4 },
+{ text:`سبحان اللهِ والحمدُ للهِ ولا إلهَ إلَّا اللهُ واللهُ أكبرُ...`, count:100 }
+]
+
+// ==================== عرض الأذكار ====================
+let current="morning";
+
+function loadAzkar(type){
+current=type;
+const container=document.getElementById("content");
+container.innerHTML="";
+azkar[type].forEach((item,i)=>{
+let saved=localStorage.getItem(type+i);
+let value=saved?parseInt(saved):item.count;
+let div=document.createElement("div");
+div.className="zekr";
+div.innerHTML=`
+<div>${item.text}</div>
+<div class="counter">
+<button onclick="decrease('${type}',${i})">تسبيح</button>
+<span class="count" id="c-${type}-${i}">${value}</span>
+<button onclick="resetOne('${type}',${i},${item.count})">إعادة</button>
+</div>
+`;
+container.appendChild(div);
+});
+}
+
+function decrease(type,i){
+let el=document.getElementById("c-"+type+"-"+i);
+let val=parseInt(el.innerText);
+if(val>0){val--; el.innerText=val; localStorage.setItem(type+i,val);
+if(val===0){el.classList.add("done"); if(soundEnabled){let audio=new Audio('https://www.soundjay.com/button/beep-07.wav'); audio.play();}}}
+}
+
+function resetOne(type,i,count){localStorage.setItem(type+i,count); loadAzkar(type);}
+function resetAll(){localStorage.clear(); loadAzkar(current);}
+loadAzkar("morning");
+
+// ==================== نجوم متحركة ====================
+const starsCanvas=document.getElementById("stars");
+starsCanvas.width=window.innerWidth;
+starsCanvas.height=window.innerHeight;
+const ctx=starsCanvas.getContext("2d");
+let stars=[];
+for(let i=0;i<250;i++){stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.5+0.5,d:Math.random()*0.5,twinkle:Math.random()});}
+function drawStars(){ctx.clearRect(0,0,canvas.width,canvas.height);
+stars.forEach(s=>{ctx.beginPath(); ctx.arc(s.x,s.y,s.r*(0.5+0.5*Math.sin(Date.now()/500+s.twinkle*10)),0,Math.PI*2); ctx.fillStyle='white'; ctx.fill();});}
+function moveStars(){stars.forEach(s=>{s.y+=s.d; if(s.y>canvas.height){s.y=0; s.x=Math.random()*canvas.width;}})}
+function animateStars(){drawStars(); moveStars(); requestAnimationFrame(animateStars);}
+animateStars();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
+
+// ==================== هلال + ضباب ====================
+const moonCanvas=document.getElementById("moonCanvas");
+moonCanvas.width=window.innerWidth; moonCanvas.height=window.innerHeight;
+const mCtx=moonCanvas.getContext('2d');
+function drawMoon(){
+mCtx.clearRect(0,0,moonCanvas.width,moonCanvas.height);
+let gradient=mCtx.createRadialGradient(150,150,30,150,150,150);
+gradient.addColorStop(0,'rgba(255,255,255,0.3)');
+gradient.addColorStop(1,'rgba(255,255,255,0)');
+mCtx.fillStyle=gradient;
+mCtx.beginPath(); mCtx.arc(150,150,150,0,Math.PI*2); mCtx.fill();
+}
+function animateMoon(){drawMoon(); requestAnimationFrame(animateMoon);}
+animateMoon();
+window.addEventListener('resize',()=>{moonCanvas.width=window.innerWidth; moonCanvas.height=window.innerHeight;});
+
+// ==================== تغيير الخلفية حسب الوقت ====================
+function setBackground(){
+let hour=new Date().getHours();
+if(hour>=6 && hour<18){document.body.style.background='linear-gradient(to bottom,#9966ff,#cc99ff)';}
+else{document.body.style.background='linear-gradient(to bottom,#330066,#660099)';}
+}
+setBackground();
+</script>
+</body>
+</html>
