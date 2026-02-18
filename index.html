@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💜 أذكار الصباح والمساء يا ولاء💜</title>
+<title>💜 أذكار الصباح والمساء 💜</title>
 <style>
 body{
     margin:0;
@@ -131,7 +131,7 @@ morning: [
 { text:`سبحان اللهِ والحمدُ للهِ ولا إلهَ إلَّا اللهُ واللهُ أكبرُ ولا حولَ ولا قوَّةَ إلَّا باللهِ العليِّ العظيمِ.`, count:100 },
 { text:`سُبْحَانَ اللهِ وبِحَمْدِهِ.`, count:100 },
 { text:`اللهمَّ عافني في بدَني، اللهمَّ عافني في سمعي، اللهمَّ عافني في بصري لا إلهَ إلا أنتَ، اللهمَّ إني أعوذُ بك من الكفرِ والفقرِ وأعوذُ بك من عذابِ القبرِ لا إلهَ إلا أنتَ.`, count:3 }
-]
+],
 evening: [
 { text:`قراءة آية الكرسي: اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ...`, count:1 },
 { text:`أمسَيْنا على فِطرةِ الإسلامِ وعلى كَلِمةِ الإخلاصِ وعلى دينِ نبيِّنا محمَّدٍ صلَّى اللهُ عليه وسلَّم وعلى مِلَّةِ أبينا إبراهيمَ حنيفًا مسلمًا وما كان مِنَ المشركينَ.`, count:1 },
@@ -144,12 +144,13 @@ evening: [
 { text:`اللهمَّ إني أسألُك العفوَ والعافيةَ في الدنيا والآخرةِ...`, count:1 },
 { text:`بسمِ اللَّهِ الَّذي لا يضرُّ معَ اسمِهِ شيءٌ ...`, count:3 },
 { text:`أعوذُ بكلماتِ اللهِ التَّامَّاتِ مِن شرِّ ما خلَق.`, count:3 },
-{ text:`اللَّهُمَّ عافِني في بَدَني، اللَّهُمَّ عافِني في سَمعي، اللَّهُمَّ عافِني في بَصَري، لا إلهَ إلَّا أنتَ...`, count:3 },
+{ text:`اللَّهُمَّ عافِني في بَدَني، اللَّهُمَّ عافِني في سَمعي، اللَّهُمَّ عافِني في بَصري، لا إلهَ إلَّا أنتَ...`, count:3 },
 { text:`قراءة سور: الإخلاص، الفلق، والناس.`, count:3 },
 { text:`حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ...`, count:7 },
 { text:`اللَّهُمَّ إنِّي أمسيتُ أُشهِدُك...`, count:4 },
 { text:`سبحان اللهِ والحمدُ للهِ ولا إلهَ إلَّا اللهُ واللهُ أكبرُ...`, count:100 }
 ]
+};
 
 // ==================== عرض الأذكار ====================
 let current="morning";
@@ -192,13 +193,13 @@ starsCanvas.width=window.innerWidth;
 starsCanvas.height=window.innerHeight;
 const ctx=starsCanvas.getContext("2d");
 let stars=[];
-for(let i=0;i<250;i++){stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.5+0.5,d:Math.random()*0.5,twinkle:Math.random()});}
-function drawStars(){ctx.clearRect(0,0,canvas.width,canvas.height);
+for(let i=0;i<250;i++){stars.push({x:Math.random()*starsCanvas.width,y:Math.random()*starsCanvas.height,r:Math.random()*1.5+0.5,d:Math.random()*0.5,twinkle:Math.random()});}
+function drawStars(){ctx.clearRect(0,0,starsCanvas.width,starsCanvas.height);
 stars.forEach(s=>{ctx.beginPath(); ctx.arc(s.x,s.y,s.r*(0.5+0.5*Math.sin(Date.now()/500+s.twinkle*10)),0,Math.PI*2); ctx.fillStyle='white'; ctx.fill();});}
-function moveStars(){stars.forEach(s=>{s.y+=s.d; if(s.y>canvas.height){s.y=0; s.x=Math.random()*canvas.width;}})}
+function moveStars(){stars.forEach(s=>{s.y+=s.d; if(s.y>starsCanvas.height){s.y=0; s.x=Math.random()*starsCanvas.width;}})}
 function animateStars(){drawStars(); moveStars(); requestAnimationFrame(animateStars);}
 animateStars();
-window.addEventListener('resize',()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
+window.addEventListener('resize',()=>{starsCanvas.width=window.innerWidth; starsCanvas.height=window.innerHeight;});
 
 // ==================== هلال + ضباب ====================
 const moonCanvas=document.getElementById("moonCanvas");
